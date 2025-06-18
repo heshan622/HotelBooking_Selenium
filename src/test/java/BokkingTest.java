@@ -4,11 +4,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
-import org.testng.annotations.Test;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 
+import org.testng.annotations.Test;
 
 public class BokkingTest {
 
@@ -21,6 +21,7 @@ public class BokkingTest {
 
         //Open chrome
         WebDriver driver = new ChromeDriver();
+        test.log(Status.INFO, "Browser launched");
         driver.manage().window().maximize();
 
         //Go to PHPTravels
@@ -119,92 +120,102 @@ public class BokkingTest {
         driver.findElement(By.xpath("/html[1]/body[1]/main[1]/div[2]/form[1]/section[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/input[1]")).click();
 
         try {
-            // PERSONAL INFORMATION (same as Adult 1)
+            test.log(Status.INFO, "Filling out the booking form...");
+
+            // PERSONAL INFORMATION
             Thread.sleep(1000);
             WebElement firstName = driver.findElement(By.name("user[first_name]"));
             firstName.sendKeys("John");
+            test.log(Status.INFO, "Entered first name: John");
 
             Thread.sleep(1000);
             WebElement lastName = driver.findElement(By.name("user[last_name]"));
             lastName.sendKeys("Doe");
+            test.log(Status.INFO, "Entered last name: Doe");
 
             Thread.sleep(1000);
             WebElement email = driver.findElement(By.name("user[email]"));
             email.sendKeys("john.doe@example.com");
+            test.log(Status.INFO, "Entered email: john.doe@example.com");
 
             Thread.sleep(1000);
             WebElement phone = driver.findElement(By.name("user[phone]"));
             phone.sendKeys("1234567890");
+            test.log(Status.INFO, "Entered phone number: 1234567890");
 
             Thread.sleep(1000);
             WebElement address = driver.findElement(By.name("user[address]"));
             address.sendKeys("123 Main Street, Los Angeles");
+            test.log(Status.INFO, "Entered address");
 
-            // SCROLL TO ADULT SECTION AND FOCUS
+            // SCROLL TO ADULT SECTION
             Thread.sleep(1000);
             WebElement adult1FirstName = driver.findElement(By.xpath("/html[1]/body[1]/main[1]/div[2]/form[1]/section[1]/div[1]/div[1]/div[1]/div[2]/div[2]/div[1]/div[2]/div[1]/div[2]/div[1]/input[1]"));
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", adult1FirstName);
-            Thread.sleep(300);
+            Thread.sleep(200);
             adult1FirstName.click();
+            test.log(Status.INFO, "Scrolled to adult section and clicked");
 
             // ADULT 1
             Thread.sleep(1000);
             new Select(driver.findElement(By.name("title_1"))).selectByVisibleText("Mr");
             driver.findElement(By.name("firstname_1")).sendKeys("John");
             driver.findElement(By.name("lastname_1")).sendKeys("Doe");
+            test.log(Status.INFO, "Filled Adult 1 details");
 
             // ADULT 2
             Thread.sleep(1000);
             new Select(driver.findElement(By.name("title_2"))).selectByVisibleText("Mrs");
             driver.findElement(By.name("firstname_2")).sendKeys("Mary");
             driver.findElement(By.name("lastname_2")).sendKeys("Smith");
+            test.log(Status.INFO, "Filled Adult 2 details");
 
             // ADULT 3
             Thread.sleep(1000);
             new Select(driver.findElement(By.name("title_3"))).selectByVisibleText("Mr");
             driver.findElement(By.name("firstname_3")).sendKeys("James");
             driver.findElement(By.name("lastname_3")).sendKeys("Brown");
+            test.log(Status.INFO, "Filled Adult 3 details");
 
-            // CHILD 1 (age 6) – assumed age is already selected
+            // CHILD 1
             Thread.sleep(1000);
             driver.findElement(By.name("child_firstname_1")).sendKeys("Emily");
             driver.findElement(By.name("child_lastname_1")).sendKeys("Doe");
+            test.log(Status.INFO, "Filled Child 1 details");
 
-            //SCROLL TO PAYMENT METHODS AND CLICK "Pay Later"
+            // SELECT PAY LATER OPTION
             Thread.sleep(1000);
             WebElement payLater = driver.findElement(By.xpath("/html[1]/body[1]/main[1]/div[2]/form[1]/section[1]/div[1]/div[1]/div[1]/div[3]/div[2]/div[1]/ul[1]/div[1]/label[3]/div[1]/div[1]"));
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", payLater);
             Thread.sleep(500);
             payLater.click();
+            test.log(Status.INFO, "Selected 'Pay Later' payment method");
 
-            //TICK TERMS AND CONDITIONS
+            // AGREE TO TERMS
             Thread.sleep(1000);
             WebElement termsCheckbox = driver.findElement(By.xpath("/html[1]/body[1]/main[1]/div[2]/form[1]/section[1]/div[1]/div[1]/div[1]/div[5]/div[1]/div[1]/div[1]/input[1]"));
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", termsCheckbox);
             Thread.sleep(500);
             if (!termsCheckbox.isSelected()) {
                 termsCheckbox.click();
+                test.log(Status.INFO, "Accepted terms and conditions");
             }
 
-            //CLICK CONFIRM BOOKING BUTTON
+            // CLICK CONFIRM BOOKING
             Thread.sleep(1000);
             driver.findElement(By.xpath("//*[@id='booking']")).click();
-
-            test.log(Status.INFO, "Browser opened and navigated to PHPTravels");
-            test.log(Status.PASS, "Hotel search initiated successfully");
-
+            test.log(Status.PASS, "Clicked 'Confirm Booking' button");
 
         } catch (Exception e) {
-            test.log(Status.FAIL, "Test Failed due to exception: " + e.getMessage());
-
+            test.log(Status.FAIL, "Test failed: " + e.getMessage());
         }
 
         finally {
             // Close the browser
             Thread.sleep(6000);
+            test.log(Status.INFO, "Closing browser");
+            extent.flush();// save_report
             driver.quit();
-            test.log(Status.INFO, "Test execution completed");
-            extent.flush(); // Save the report
 
         }
 
